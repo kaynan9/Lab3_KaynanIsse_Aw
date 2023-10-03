@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 function Square({ value, onSquareClick }) {
   return (
@@ -30,25 +30,31 @@ function Board({ xIsNext, squares, onPlay }) {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
 
+  const boardRows = [];
+  for (let row = 0; row < 3; row++) {
+    const rowSquares = [];
+    for (let col = 0; col < 3; col++) {
+      const squareIndex = row * 3 + col;
+      rowSquares.push(
+        <Square
+          key={squareIndex}
+          value={squares[squareIndex]}
+          onSquareClick={() => handleClick(squareIndex)}
+        />
+      );
+    }
+    boardRows.push(
+      <div className="board-row" key={row}>
+        {rowSquares}
+      </div>
+    );
+  }
+
   return (
-    <>
+    <React.Fragment>
       <div className="status">{status}</div>
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
-      </div>
-    </>
+      {boardRows}
+    </React.Fragment>
   );
 }
 
@@ -66,6 +72,9 @@ export default function Game() {
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
+  }
+  function restartGame() {
+    window.location.reload();
   }
 
   const moves = history.map((squares, move) => {
@@ -89,7 +98,9 @@ export default function Game() {
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
+        <button onClick={restartGame}>Restart Game</button>
       </div>
+      
     </div>
   );
 }
